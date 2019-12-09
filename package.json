@@ -4,8 +4,7 @@
   "description": "",
   "scripts": {
     "tsc:compile": "tsc main.ts",
-    "tsc:watch": "tsc -w main.ts",
-    "node:run": "node main.js"
+    "tsc:watch": "tsc -w main.ts"
   },
   "repository": {
     "type": "git",
