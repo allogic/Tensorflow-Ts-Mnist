@@ -1,0 +1,26 @@
+{
+  "name": "tensorflow-mnist",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "tsc:compile": "tsc main.ts",
+    "tsc:watch": "tsc -w main.ts",
+    "node:run": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/allogic/tensorflow-mnist.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allogic/tensorflow-mnist/issues"
+  },
+  "homepage": "https://github.com/allogic/tensorflow-mnist#readme",
+  "dependencies": {
+    "@tensorflow/tfjs": "^1.4.0",
+    "@types/node": "^12.12.14",
+    "typescript": "^3.7.3"
+  }
+}
