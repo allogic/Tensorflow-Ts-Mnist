@@ -1,4 +1,4 @@
-import {layers, sequential, Sequential, Tensor, nextFrame, model} from '@tensorflow/tfjs';
+import {layers, sequential, Sequential, Tensor, nextFrame} from '@tensorflow/tfjs-node';
 
 import {WIDTH, HEIGHT} from './data';
 
@@ -47,30 +47,4 @@ export const cnn = (): Sequential => {
   }));
 
   return model;
-};
-
-export const train = async (model: Sequential, images: Tensor, labels: Tensor): Promise<void> => {
-  model.compile({
-    optimizer: 'rmsprop',
-    loss: 'categoricalCrossentropy',
-    metrics: ['accuracy']
-  });
-
-  await model.fit(images, labels, {
-    batchSize: 6000,
-    validationSplit: 0.15,
-    epochs: 1000,
-    callbacks: {
-      onBatchEnd: async (batch, logs) => {
-        console.log(`Batch ${batch} ${logs}`);
-
-        await nextFrame();
-      },
-      onEpochEnd: async (epoch, logs) => {
-        console.log(`Epoch ${epoch} ${logs}`);
-
-        await nextFrame();
-      }
-    }
-  });
 };

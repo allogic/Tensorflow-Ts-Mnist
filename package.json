@@ -18,8 +18,9 @@
   },
   "homepage": "https://github.com/allogic/tensorflow-mnist#readme",
   "dependencies": {
-    "@tensorflow/tfjs": "^1.4.0",
-    "@types/node": "^12.12.14",
+    "@tensorflow/tfjs-node": "^1.4.0",
+    "@tensorflow/tfjs-node-gpu": "^1.4.0",
+    "@types/node": "^12.12.15",
     "typescript": "^3.7.3"
   }
 }

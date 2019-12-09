@@ -1,7 +1,7 @@
 import {readFileSync} from 'fs';
 import {strictEqual} from 'assert';
 
-import {tensor, Tensor} from '@tensorflow/tfjs';
+import {buffer} from '@tensorflow/tfjs-node';
 
 const uInt = (a: number, b: number, c: number, d: number): number => (a << 24) | (b << 16) | (c << 8) | d;
 
@@ -33,15 +33,15 @@ export const load = (images: string, labels: string): Array<any> => {
   strictEqual(imageWidth, WIDTH, `Expected image width to be ${WIDTH} got ${imageWidth}`);
   strictEqual(imageHeight, HEIGHT, `Expected image width to be ${HEIGHT} got ${imageHeight}`);
 
-  let imageArray: Float32Array = new Float32Array(samples * SIZE);
-  let labelArray: Uint8Array = new Uint8Array(samples);
+  const imageBuffer = buffer([samples * SIZE]);
+  const labelBuffer = buffer([samples, 10]);
 
-  for (let i: number = 0; i < samples * SIZE; i++) imageArray[i] = imageBlob[16 + i] / 255;
-  for (let i: number = 0; i < samples; i++) labelArray[i] = labelBlob[8 + i];
+  for (let i: number = 0; i < samples * SIZE; i++) imageBuffer.set(imageBlob[16 + i] / 255, i);
+  for (let i: number = 0; i < samples; i++) labelBuffer.set(1, i, labelBlob[8 + i]);
 
   return [
     samples,
-    tensor(imageArray, [samples, WIDTH, HEIGHT, 1]),
-    tensor(labelArray, [samples, 1])
+    imageBuffer.toTensor().reshape([samples, WIDTH, HEIGHT, 1]),
+    labelBuffer.toTensor()
   ];
 };
