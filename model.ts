@@ -1,4 +1,4 @@
-import {layers, sequential, Sequential, Tensor, nextFrame} from '@tensorflow/tfjs-node';
+import {layers, sequential, Sequential} from '@tensorflow/tfjs-node';
 
 import {WIDTH, HEIGHT} from './data';
 

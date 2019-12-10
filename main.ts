@@ -1,39 +1,51 @@
 import {load} from './data';
 import {cnn} from './model';
 
-const [trainingSamples, trainingImages, trainingLabels] = load('./train-images-idx3-ubyte', './train-labels-idx1-ubyte');
-const [testSamples, testImages, testLabels] = load('./t10k-images-idx3-ubyte', './t10k-labels-idx1-ubyte');
+import {Tensor, Sequential, split} from '@tensorflow/tfjs-node';
 
-/*const t = split(trainingImages, trainingSamples);
-const l = split(trainingLabels, trainingSamples);
+const [trainingImages, trainingLabels] = load('./train-images-idx3-ubyte', './train-labels-idx1-ubyte');
+const [testImages, testLabels] = load('./t10k-images-idx3-ubyte', './t10k-labels-idx1-ubyte');
 
-l[666].print();
+const render = (image: Tensor, label: Tensor): void => {
+  label.print();
 
-for (let i: number = 0; i < 28; i++) {
-  let line: string = '';
+  for (let i: number = 0; i < 28; i++) {
+    let line: string = '';
 
-  for (let j: number = 0; j < 28; j++)
-    line += t[666].bufferSync().get(0, i, j) === 0 ? '0' : '1';
+    for (let j: number = 0; j < 28; j++)
+      line += image.bufferSync().get(0, i, j) === 0 ? '0' : '1';
 
-  console.log(line);
-}*/
+    console.log(line);
+  }
+};
 
-const model = cnn();
+const model: Sequential = cnn();
 
-const train = async () => {
+const train = async (): Promise<void> => {
   model.compile({
-    optimizer: 'adam',
+    optimizer: 'rmsprop',
     loss: 'meanSquaredError',
     metrics: ['acc']
   });
 
-  await model.fit(trainingSamples, trainingLabels, {
+  model.summary();
+
+  await model.fit(trainingImages, trainingLabels, {
     shuffle: true,
     batchSize: 6000,
-    epochs: 100
+    epochs: 10,
+    validationData: [testImages, testLabels],
   });
 };
 
-train(, trainingImages, trainingLabels).then(() => {
+train().then(() => {
+  const predictions: any = model.predict(testImages);
 
-}).catch(error => console.log(error));
+  const xs = split(testImages, 10000);
+  const ys = split(predictions, 10000);
+
+  render(xs[0], ys[0]);
+  render(xs[1], ys[1]);
+  render(xs[2], ys[2]);
+  render(xs[3], ys[3]);
+});

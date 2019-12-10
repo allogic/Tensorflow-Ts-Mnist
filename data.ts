@@ -1,7 +1,7 @@
 import {readFileSync} from 'fs';
 import {strictEqual} from 'assert';
 
-import {buffer} from '@tensorflow/tfjs-node';
+import {buffer, Tensor} from '@tensorflow/tfjs-node';
 
 const uInt = (a: number, b: number, c: number, d: number): number => (a << 24) | (b << 16) | (c << 8) | d;
 
@@ -10,7 +10,7 @@ export const HEIGHT: number = 28;
 
 const SIZE: number = WIDTH * HEIGHT;
 
-export const load = (images: string, labels: string): Array<any> => {
+export const load = (images: string, labels: string): Tensor[] => {
   const imageBlob: Uint8Array = readFileSync(images);
   const labelBlob: Uint8Array = readFileSync(labels);
 
@@ -22,8 +22,6 @@ export const load = (images: string, labels: string): Array<any> => {
 
   strictEqual(imageSamples, labelSamples, `Expected image and label sample count to be equal`);
 
-  const samples: number = imageSamples;
-
   strictEqual(imageBlob[2], 8, `Expected image value type to be 8 got ${imageBlob[2]}`);
   strictEqual(labelBlob[2], 8, `Expected label value type to be 8 got ${labelBlob[2]}`);
 
@@ -33,15 +31,14 @@ export const load = (images: string, labels: string): Array<any> => {
   strictEqual(imageWidth, WIDTH, `Expected image width to be ${WIDTH} got ${imageWidth}`);
   strictEqual(imageHeight, HEIGHT, `Expected image width to be ${HEIGHT} got ${imageHeight}`);
 
-  const imageBuffer = buffer([samples * SIZE]);
-  const labelBuffer = buffer([samples, 10]);
+  const imageBuffer = buffer([imageSamples * SIZE]);
+  const labelBuffer = buffer([labelSamples, 10]);
 
-  for (let i: number = 0; i < samples * SIZE; i++) imageBuffer.set(imageBlob[16 + i] / 255, i);
-  for (let i: number = 0; i < samples; i++) labelBuffer.set(1, i, labelBlob[8 + i]);
+  for (let i: number = 0; i < imageSamples * SIZE; i++) imageBuffer.set(imageBlob[16 + i] / 255, i);
+  for (let i: number = 0; i < labelSamples; i++) labelBuffer.set(1, i, labelBlob[8 + i]);
 
   return [
-    samples,
-    imageBuffer.toTensor().reshape([samples, WIDTH, HEIGHT, 1]),
+    imageBuffer.toTensor().reshape([imageSamples, WIDTH, HEIGHT, 1]),
     labelBuffer.toTensor()
   ];
 };
